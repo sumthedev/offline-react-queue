@@ -5,15 +5,16 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-"scripts": {
-  "build": "tsc",
-  "test": "vitest run"
-},
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.3.0",
+    "fake-indexeddb": "^6.2.5",
     "react": "^19.3.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.7"
