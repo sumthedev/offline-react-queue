@@ -26,4 +26,10 @@ export class SyncEngine {
       await this.queue.remove(operation.id);
     }
   }
+
+  start(): () => void {
+    return this.networkMonitor.onOnline(() => {
+      void this.sync();
+    });
+  }
 }

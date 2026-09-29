@@ -79,4 +79,29 @@ describe("SyncEngine", () => {
 
     expect(await queue.getSize()).toBe(1);
   });
+  it("should sync when the browser comes back online", async () => {
+  const syncHandler = vi.fn().mockResolvedValue(undefined);
+
+  const engine = new SyncEngine(
+    queue,
+    networkMonitor,
+    syncHandler
+  );
+
+  await queue.add(createOperation("1"));
+
+  vi.spyOn(networkMonitor, "isOnline").mockReturnValue(true);
+
+  const stop = engine.start();
+
+  window.dispatchEvent(new Event("online"));
+
+  await vi.waitFor(() => {
+    expect(syncHandler).toHaveBeenCalledTimes(1);
+  });
+
+  expect(await queue.getSize()).toBe(0);
+
+  stop();
+});
 });
