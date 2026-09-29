@@ -1,89 +1,62 @@
 import { describe, expect, it } from "vitest";
 import { Queue } from "../src/core/Queue";
+import { MemoryStorage } from "../src/storage/MemoryStorage";
 
 describe("Queue", () => {
-  it("should add an operation", () => {
-    const queue = new Queue();
+  const createQueue = () => {
+    const storage = new MemoryStorage();
 
-    queue.add({
-      id: "1",
-      type: "UPDATE_FILE",
-      payload: {
-        fileId: "file-1",
-        content: "Hello"
-      },
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
+    return new Queue(storage);
+  };
 
-    expect(queue.size).toBe(1);
+  const createOperation = (id: string) => ({
+    id,
+    type: "UPDATE_FILE",
+    payload: {
+      fileId: "file-1",
+      content: "Hello"
+    },
+    createdAt: Date.now(),
+    retryCount: 0,
+    status: "pending" as const
   });
 
-  it("should return all operations", () => {
-    const queue = new Queue();
+  it("should add an operation", async () => {
+    const queue = createQueue();
 
-    queue.add({
-      id: "1",
-      type: "UPDATE_FILE",
-      payload: {},
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
+    await queue.add(createOperation("1"));
 
-    queue.add({
-      id: "2",
-      type: "DELETE_FILE",
-      payload: {},
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
-
-    expect(queue.getAll()).toHaveLength(2);
+    expect(await queue.getSize()).toBe(1);
   });
 
-  it("should remove an operation", () => {
-    const queue = new Queue();
+  it("should return all operations", async () => {
+    const queue = createQueue();
 
-    queue.add({
-      id: "1",
-      type: "UPDATE_FILE",
-      payload: {},
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
+    await queue.add(createOperation("1"));
+    await queue.add(createOperation("2"));
 
-    queue.remove("1");
+    const operations = await queue.getAll();
 
-    expect(queue.size).toBe(0);
+    expect(operations).toHaveLength(2);
   });
 
-  it("should clear all operations", () => {
-    const queue = new Queue();
+  it("should remove an operation", async () => {
+    const queue = createQueue();
 
-    queue.add({
-      id: "1",
-      type: "UPDATE_FILE",
-      payload: {},
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
+    await queue.add(createOperation("1"));
+    await queue.remove("1");
 
-    queue.add({
-      id: "2",
-      type: "DELETE_FILE",
-      payload: {},
-      createdAt: Date.now(),
-      retryCount: 0,
-      status: "pending"
-    });
+    expect(await queue.getSize()).toBe(0);
+  });
 
-    queue.clear();
+  it("should clear all operations", async () => {
+    const queue = createQueue();
 
-    expect(queue.size).toBe(0);
+    await queue.add(createOperation("1"));
+    await queue.add(createOperation("2"));
+
+    await queue.clear();
+
+    expect(await queue.getSize()).toBe(0);
   });
 });

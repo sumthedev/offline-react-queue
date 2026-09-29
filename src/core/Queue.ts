@@ -1,28 +1,36 @@
-import { Operation } from "./Operation";
-
+import type { Operation } from "./Operation";
+import type { StorageAdapter } from "../storage/StorageAdapter";
 
 export class Queue {
-  private operations: Operation[] = [];
+  constructor(private readonly storage: StorageAdapter) {}
 
-  add<T>(operation: Operation<T>): void {
-    this.operations.push(operation);
+  async add<T>(operation: Operation<T>): Promise<void> {
+    await this.storage.add(operation);
   }
 
-  getAll(): Operation[] {
-    return [...this.operations];
+  async getAll(): Promise<Operation[]> {
+    return this.storage.getAll();
   }
 
-  remove(id: string): void {
-    this.operations = this.operations.filter(
-      (operation) => operation.id !== id
-    );
+  async getById(id: string): Promise<Operation | undefined> {
+    return this.storage.getById(id);
   }
 
-  clear(): void {
-    this.operations = [];
+  async remove(id: string): Promise<void> {
+    await this.storage.remove(id);
   }
 
-  get size(): number {
-    return this.operations.length;
+  async update<T>(operation: Operation<T>): Promise<void> {
+    await this.storage.update(operation);
+  }
+
+  async clear(): Promise<void> {
+    await this.storage.clear();
+  }
+
+  async getSize(): Promise<number> {
+    const operations = await this.storage.getAll();
+
+    return operations.length;
   }
 }
