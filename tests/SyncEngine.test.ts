@@ -104,4 +104,40 @@ describe("SyncEngine", () => {
 
   stop();
 });
+it("should not run multiple sync processes at the same time", async () => {
+  let resolveSync: (() => void) | undefined;
+
+  const syncHandler = vi.fn().mockImplementation(
+    () =>
+      new Promise<void>((resolve) => {
+        resolveSync = resolve;
+      })
+  );
+
+  const engine = new SyncEngine(
+    queue,
+    networkMonitor,
+    syncHandler
+  );
+
+  await queue.add(createOperation("1"));
+
+  vi.spyOn(networkMonitor, "isOnline").mockReturnValue(true);
+
+  const firstSync = engine.sync();
+  const secondSync = engine.sync();
+
+  await vi.waitFor(() => {
+    expect(syncHandler).toHaveBeenCalledTimes(1);
+  });
+
+  expect(syncHandler).toHaveBeenCalledTimes(1);
+
+  resolveSync?.();
+
+  await firstSync;
+  await secondSync;
+
+  expect(await queue.getSize()).toBe(0);
+});
 });
