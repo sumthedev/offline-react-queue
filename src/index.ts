@@ -10,3 +10,12 @@ export { MemoryStorage } from "./storage/MemoryStorage";
 export { IndexedDBStorage } from "./storage/IndexedDBStorage";
 
 export { NetworkMonitor } from "./network/NetworkMonitor";
+
+export {
+  useOfflineQueue
+} from "./react/useOfflineQueue";
+
+export type {
+  UseOfflineQueueOptions,
+  UseOfflineQueueResult
+} from "./react/useOfflineQueue";

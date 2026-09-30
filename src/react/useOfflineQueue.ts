@@ -7,15 +7,22 @@ import { IndexedDBStorage } from "../storage/IndexedDBStorage";
 import type { StorageAdapter } from "../storage/StorageAdapter";
 import { NetworkMonitor } from "../network/NetworkMonitor";
 
-interface UseOfflineQueueOptions {
+export interface UseOfflineQueueOptions {
   syncHandler: (operation: Operation) => Promise<void>;
   storage?: StorageAdapter;
+}
+
+export interface UseOfflineQueueResult {
+  operations: Operation[];
+  pendingCount: number;
+  add: (operation: Operation) => Promise<void>;
+  sync: () => Promise<void>;
 }
 
 export function useOfflineQueue({
   syncHandler,
   storage
-}: UseOfflineQueueOptions) {
+}: UseOfflineQueueOptions): UseOfflineQueueResult {
   const queue = useRef(
     new Queue(storage ?? new IndexedDBStorage())
   ).current;
