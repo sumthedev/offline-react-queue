@@ -138,38 +138,38 @@ describe("useOfflineQueue", () => {
 
         expect(result.current.operations).toHaveLength(0);
     });
+  
     it("should keep failed operations in the queue", async () => {
-        await storage.add(createOperation("1"));
+  Object.defineProperty(navigator, "onLine", {
+    configurable: true,
+    value: true
+  });
 
-        const syncHandler = async () => {
-            throw new Error("Sync failed");
-        };
+  await storage.add(createOperation("1"));
 
-        const { result } = renderHook(() =>
-            useOfflineQueue({
-                storage,
-                syncHandler
-            })
-        );
+  const syncHandler = async () => {
+    throw new Error("Sync failed");
+  };
 
-        await waitFor(() => {
-            expect(result.current.pendingCount).toBe(1);
-        });
+  const { result } = renderHook(() =>
+    useOfflineQueue({
+      storage,
+      syncHandler
+    })
+  );
 
-        Object.defineProperty(navigator, "onLine", {
-            configurable: true,
-            value: true
-        });
+  await waitFor(() => {
+    expect(result.current.pendingCount).toBe(1);
+  });
 
-        await result.current.sync();
+  await result.current.sync();
 
-        await waitFor(() => {
-            expect(result.current.pendingCount).toBe(1);
-        });
+  await waitFor(() => {
+    expect(result.current.operations[0]?.retryCount).toBe(1);
+  });
 
-        expect(result.current.operations[0]?.retryCount).toBe(1);
-        expect(result.current.operations[0]?.status).toBe("pending");
-    });
+  expect(result.current.operations[0]?.status).toBe("pending");
+});
 
     it("should mark an operation as failed after maximum retries", async () => {
   await storage.add(createOperation("1"));
