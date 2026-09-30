@@ -1,5 +1,5 @@
-import type { Operation } from "./Operation";
-import type { StorageAdapter } from "../storage/StorageAdapter";
+import type { Operation } from "./Operation.js";
+import type { StorageAdapter } from "../storage/StorageAdapter.js";
 
 export class Queue {
   constructor(private readonly storage: StorageAdapter) {}

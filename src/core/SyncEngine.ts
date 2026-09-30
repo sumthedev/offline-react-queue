@@ -1,7 +1,7 @@
-import type { Operation } from "./Operation";
-import type { Queue } from "./Queue";
-import type { NetworkMonitor } from "../network/NetworkMonitor";
-import type { RetryManager } from "./RetryManager";
+import type { Operation } from "./Operation.js";
+import type { Queue } from "./Queue.js";
+import type { NetworkMonitor } from "../network/NetworkMonitor.js";
+import type { RetryManager } from "./RetryManager.js";
 
 export type SyncHandler = (
   operation: Operation

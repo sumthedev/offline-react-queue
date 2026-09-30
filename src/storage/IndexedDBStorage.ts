@@ -1,5 +1,5 @@
-import type { Operation } from "../core/Operation";
-import type { StorageAdapter } from "./StorageAdapter";
+import type { Operation } from "../core/Operation.js";
+import type { StorageAdapter } from "./StorageAdapter.js";
 
 export class IndexedDBStorage implements StorageAdapter {
   private db: IDBDatabase | null = null;

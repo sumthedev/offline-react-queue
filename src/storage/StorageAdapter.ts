@@ -1,4 +1,4 @@
-import type { Operation } from "../core/Operation";
+import type { Operation } from "../core/Operation.js";
 
 export interface StorageAdapter {
   add<T>(operation: Operation<T>): Promise<void>;

@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Operation } from "../core/Operation";
-import { Queue } from "../core/Queue";
-import { SyncEngine } from "../core/SyncEngine";
-import { RetryManager } from "../core/RetryManager";
-import { IndexedDBStorage } from "../storage/IndexedDBStorage";
-import type { StorageAdapter } from "../storage/StorageAdapter";
-import { NetworkMonitor } from "../network/NetworkMonitor";
+import type { Operation } from "../core/Operation.js";
+import { Queue } from "../core/Queue.js";
+import { SyncEngine } from "../core/SyncEngine.js";
+import { RetryManager } from "../core/RetryManager.js";
+import { IndexedDBStorage } from "../storage/IndexedDBStorage.js";
+import type { StorageAdapter } from "../storage/StorageAdapter.js";
+import { NetworkMonitor } from "../network/NetworkMonitor.js";
 
 export interface UseOfflineQueueOptions {
   syncHandler: (operation: Operation) => Promise<void>;
