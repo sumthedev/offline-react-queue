@@ -1,20 +1,37 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Operation } from "../core/Operation";
-import type { Queue } from "../core/Queue";
-import type { SyncEngine } from "../core/SyncEngine";
-import type { NetworkMonitor } from "../network/NetworkMonitor";
+import { Queue } from "../core/Queue";
+import { SyncEngine } from "../core/SyncEngine";
+import { RetryManager } from "../core/RetryManager";
+import { IndexedDBStorage } from "../storage/IndexedDBStorage";
+import type { StorageAdapter } from "../storage/StorageAdapter";
+import { NetworkMonitor } from "../network/NetworkMonitor";
 
 interface UseOfflineQueueOptions {
-  queue: Queue;
-  syncEngine: SyncEngine;
-  networkMonitor: NetworkMonitor;
+  syncHandler: (operation: Operation) => Promise<void>;
+  storage?: StorageAdapter;
 }
 
 export function useOfflineQueue({
-  queue,
-  syncEngine,
-  networkMonitor
+  syncHandler,
+  storage
 }: UseOfflineQueueOptions) {
+  const queue = useRef(
+    new Queue(storage ?? new IndexedDBStorage())
+  ).current;
+
+  const networkMonitor = useRef(new NetworkMonitor()).current;
+  const retryManager = useRef(new RetryManager()).current;
+
+  const syncEngine = useRef(
+    new SyncEngine(
+      queue,
+      networkMonitor,
+      syncHandler,
+      retryManager
+    )
+  ).current;
+
   const [operations, setOperations] = useState<Operation[]>([]);
 
   const refresh = useCallback(async () => {
@@ -26,6 +43,7 @@ export function useOfflineQueue({
   const add = useCallback(
     async (operation: Operation) => {
       await queue.add(operation);
+
       await refresh();
     },
     [queue, refresh]
@@ -33,6 +51,7 @@ export function useOfflineQueue({
 
   const sync = useCallback(async () => {
     await syncEngine.sync();
+
     await refresh();
   }, [syncEngine, refresh]);
 
