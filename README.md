@@ -1,4 +1,4 @@
-# react-offline-queue
+# offline-react-queue
 
 An offline-first operation queue for React applications with persistent storage, automatic synchronization, and retry support.
 
@@ -17,13 +17,13 @@ An offline-first operation queue for React applications with persistent storage,
 ## Installation
 
 ```bash
-npm install react-offline-queue
+npm install offline-react-queue
 ```
 
 ## Basic Usage
 
 ```tsx
-import { useOfflineQueue } from "react-offline-queue";
+import { useOfflineQueue } from "offline-react-queue";
 
 function MyComponent() {
   const { add, sync, pendingCount } = useOfflineQueue({
@@ -137,7 +137,7 @@ You can provide your own storage adapter when needed.
 import {
   MemoryStorage,
   useOfflineQueue
-} from "react-offline-queue";
+} from "offline-react-queue";
 
 const storage = new MemoryStorage();
 
@@ -247,7 +247,7 @@ import type {
   StorageAdapter,
   UseOfflineQueueOptions,
   UseOfflineQueueResult
-} from "react-offline-queue";
+} from "offline-react-queue";
 ```
 
 ## Development

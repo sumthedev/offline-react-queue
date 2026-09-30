@@ -1,5 +1,5 @@
 {
-  "name": "react-offline-queue",
+  "name": "offline-react-queue",
   "version": "0.1.0",
   "description": "Offline operation queue for React applications",
   "type": "module",
