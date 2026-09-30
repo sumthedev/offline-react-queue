@@ -61,11 +61,11 @@ export function useOfflineQueue({
 
   useEffect(() => {
     const unsubscribe = networkMonitor.onOnline(() => {
-      void refresh();
+      void sync();
     });
 
     return unsubscribe;
-  }, [networkMonitor, refresh]);
+  }, [networkMonitor, sync]);
 
   return {
     operations,

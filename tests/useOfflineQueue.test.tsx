@@ -84,28 +84,58 @@ describe("useOfflineQueue", () => {
     expect(result.current.operations[0]).toEqual(operation);
   });
 
-  it("should refresh when the browser comes back online", async () => {
-    await storage.add(createOperation("1"));
+  it("should automatically sync when the browser comes back online", async () => {
+  await storage.add(createOperation("1"));
 
-    const { result } = renderHook(() =>
-      useOfflineQueue({
-        storage,
-        syncHandler: async () => {}
-      })
-    );
+  const syncHandler = async () => {};
 
-    await waitFor(() => {
-      expect(result.current.pendingCount).toBe(1);
-    });
+  const { result } = renderHook(() =>
+    useOfflineQueue({
+      storage,
+      syncHandler
+    })
+  );
 
-    await storage.remove("1");
-
-    window.dispatchEvent(new Event("online"));
-
-    await waitFor(() => {
-      expect(result.current.pendingCount).toBe(0);
-    });
-
-    expect(result.current.operations).toHaveLength(0);
+  await waitFor(() => {
+    expect(result.current.pendingCount).toBe(1);
   });
+
+  window.dispatchEvent(new Event("online"));
+
+  await waitFor(() => {
+    expect(result.current.pendingCount).toBe(0);
+  });
+
+  expect(result.current.operations).toHaveLength(0);
+});
+
+it("should automatically sync when the browser comes back online", async () => {
+  Object.defineProperty(navigator, "onLine", {
+    configurable: true,
+    value: true
+  });
+
+  await storage.add(createOperation("1"));
+
+  const syncHandler = async () => {};
+
+  const { result } = renderHook(() =>
+    useOfflineQueue({
+      storage,
+      syncHandler
+    })
+  );
+
+  await waitFor(() => {
+    expect(result.current.pendingCount).toBe(1);
+  });
+
+  window.dispatchEvent(new Event("online"));
+
+  await waitFor(() => {
+    expect(result.current.pendingCount).toBe(0);
+  });
+
+  expect(result.current.operations).toHaveLength(0);
+});
 });
